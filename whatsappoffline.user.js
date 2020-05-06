@@ -4,6 +4,8 @@
 // @version      0.1
 // @description  Disable WhatsApp online and message-read status
 // @author       Sven Anderson
+// @homepage     https://github.com/ansiwen/userscripts/
+// @supportURL   https://github.com/ansiwen/userscripts/issues
 // @downloadURL  https://raw.githubusercontent.com/ansiwen/userscripts/master/whatsappoffline.user.js
 // @license      AGPL-3.0-or-later; https://www.gnu.org/licenses/agpl-3.0.txt
 // @icon         https://web.whatsapp.com/favicon.ico
