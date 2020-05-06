@@ -20,7 +20,7 @@
     var mode = {
         offline: true,
         unread: true
-    }
+    };
     var menuIDs = [];
     var wrapper = function(f, name, key) {
         return function() {
@@ -30,28 +30,28 @@
             }
             var args = Array.prototype.splice.call(arguments, 0);
             return f.apply(this, args);
-        }
-    }
+        };
+    };
     var maybeReset = function() {
         if (presencePatched && seenPatched) {
             console.log("restoring Object.defineProperty()");
             Object.defineProperty = objDefPropOrig;
         }
-    }
+    };
     var refreshMenu = function() {
         menuIDs.forEach(function(id){
-            GM_unregisterMenuCommand(id)
-        })
-        menuIDs.push(GM_registerMenuCommand("Offline Mode:"+(mode.offline?"ON":"OFF"), function(){toggle("offline")}));
-        menuIDs.push(GM_registerMenuCommand("Unread Mode:"+(mode.unread?"ON":"OFF"), function(){toggle("unread")}));
-    }
+            GM_unregisterMenuCommand(id);
+        });
+        menuIDs.push(GM_registerMenuCommand("Offline Mode:"+(mode.offline?"ON":"OFF"), function(){toggle("offline");}));
+        menuIDs.push(GM_registerMenuCommand("Unread Mode:"+(mode.unread?"ON":"OFF"), function(){toggle("unread");}));
+    };
     var toggle = function(key) {
-        console.log("toggled", key, "mode")
+        console.log("toggled", key, "mode");
         mode[key] = !mode[key];
         console.log(mode);
         refreshMenu();
-    }
-    refreshMenu()
+    };
+    refreshMenu();
     console.log("patching Object.defineProperty()");
     Object.defineProperty = function(obj, prop, desc) {
         if (!presencePatched && obj.sendPresenceAvailable) {
@@ -68,8 +68,8 @@
                     seenPatched = true;
                     maybeReset();
                 }
-            })
+            });
         }
         return objDefPropOrig.call(this, obj, prop, desc);
-    }
+    };
 })();
