@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WhatsAppOffline
 // @namespace    https://github.com/ansiwen
-// @version      0.1
+// @version      0.1.1
 // @description  Disable WhatsApp online and message-read status
 // @author       Sven Anderson
 // @homepage     https://github.com/ansiwen/userscripts/
