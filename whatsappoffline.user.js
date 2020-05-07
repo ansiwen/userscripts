@@ -44,6 +44,7 @@
         menuIDs.forEach(function(id){
             GM_unregisterMenuCommand(id);
         });
+        menuIDs = [];
         menuIDs.push(GM_registerMenuCommand("Offline Mode:"+(mode.offline?"ON":"OFF"), function(){toggle("offline");}));
         menuIDs.push(GM_registerMenuCommand("Unread Mode:"+(mode.unread?"ON":"OFF"), function(){toggle("unread");}));
     };
