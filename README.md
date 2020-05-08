@@ -1,6 +1,6 @@
 # Userscripts
 
-  * WhatsAppOffline: A hack to disable the "online" status and the "message read" notifications (double blue checkmarks). Both can be individually re-enabled from the userscript extensions menu.
+  * WhatsAppOffline: A hack for the WhatsApp [web-interface](https://web.whatsapp.com) to disable the "online" status and the "message read" notifications (double blue checkmarks). Both can be individually re-enabled from the userscript extensions menu.
 
 ## Installation
 
