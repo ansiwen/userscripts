@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WhatsAppOffline
 // @namespace    https://github.com/ansiwen
-// @version      0.1.1
+// @version      0.1.2
 // @description  Disable WhatsApp online and message-read status
 // @author       Sven Anderson
 // @homepage     https://github.com/ansiwen/userscripts/
@@ -19,14 +19,19 @@
     var objDefPropOrig = Object.defineProperty;
     var presencePatched = false;
     var seenPatched = false;
-    var mode = {
-        offline: true,
-        unread: true
-    };
     var menuIDs = [];
-    var wrapper = function(f, name, key) {
+    var offlineConf = "WhatsAppOffline_offlineMode";
+    var unreadConf = "WhatsAppOffline_unreadMode";
+    var getConf = function(key) {
+        var val = window.localStorage.getItem(key);
+        return val === "false" ? false : true;
+    }
+    var setConf = function(key, val) {
+        return window.localStorage.setItem(key, val);
+    }
+    var wrapper = function(f, name, conf) {
         return function() {
-            if (mode[key]) {
+            if (getConf(conf)) {
                 console.log("Intercepting", name);
                 return Promise.resolve();
             }
@@ -41,17 +46,15 @@
         }
     };
     var refreshMenu = function() {
-        menuIDs.forEach(function(id){
+        for (var id; id = menuIDs.pop();) {
             GM_unregisterMenuCommand(id);
-        });
-        menuIDs = [];
-        menuIDs.push(GM_registerMenuCommand("Offline Mode:"+(mode.offline?"ON":"OFF"), function(){toggle("offline");}));
-        menuIDs.push(GM_registerMenuCommand("Unread Mode:"+(mode.unread?"ON":"OFF"), function(){toggle("unread");}));
+        };
+        menuIDs.push(GM_registerMenuCommand(`${getConf(offlineConf) ? "✅" : "⬛"} OfflineMode`, function(){ toggle(offlineConf); }));
+        menuIDs.push(GM_registerMenuCommand(`${getConf(unreadConf) ? "✅" : "⬛"} UnreadMode`, function(){ toggle(unreadConf); }));
     };
-    var toggle = function(key) {
-        console.log("toggled", key, "mode");
-        mode[key] = !mode[key];
-        console.log(mode);
+    var toggle = function(conf) {
+        console.log("toggled:", conf);
+        setConf(conf, !getConf(conf));
         refreshMenu();
     };
     refreshMenu();
@@ -59,15 +62,15 @@
     Object.defineProperty = function(obj, prop, desc) {
         if (!presencePatched && obj.sendPresenceAvailable) {
             console.log("patching sendPresenceAvailable()");
-            obj.sendPresenceAvailable = wrapper(obj.sendPresenceAvailable, "sendPresenceAvailable", "offline");
+            obj.sendPresenceAvailable = wrapper(obj.sendPresenceAvailable, "sendPresenceAvailable", offlineConf);
             presencePatched = true;
             maybeReset();
         }
-        if (!seenPatched && prop == "__esModule") {
+        if (!seenPatched && prop === "__esModule") {
             setTimeout(function (){
                 if (obj.sendSeen) {
                     console.log("patching sendSeen()");
-                    obj.sendSeen = wrapper(obj.sendSeen, "sendSeen", "unread");
+                    obj.sendSeen = wrapper(obj.sendSeen, "sendSeen", unreadConf);
                     seenPatched = true;
                     maybeReset();
                 }
