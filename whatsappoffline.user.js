@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WhatsAppOffline
 // @namespace    https://github.com/ansiwen
-// @version      0.1.2
+// @version      0.1.3
 // @description  Disable WhatsApp online and message-read status
 // @author       Sven Anderson
 // @homepage     https://github.com/ansiwen/userscripts/
@@ -29,13 +29,18 @@
     var setConf = function(key, val) {
         return window.localStorage.setItem(key, val);
     }
-    var wrapper = function(f, name, conf) {
+    var wrapper = function(f, name, conf, g) {
         return function() {
-            if (getConf(conf)) {
-                console.log("Intercepting", name);
-                return Promise.resolve();
-            }
             var args = Array.prototype.splice.call(arguments, 0);
+            if (getConf(conf)) {
+                if (g) {
+                    console.log("Redirecting", name);
+                    return g.apply(this, args);
+                } else {
+                    console.log("Intercepting", name);
+                    return Promise.resolve();
+                }
+            }
             return f.apply(this, args);
         };
     };
@@ -60,9 +65,9 @@
     refreshMenu();
     console.log("patching Object.defineProperty()");
     Object.defineProperty = function(obj, prop, desc) {
-        if (!presencePatched && obj.sendPresenceAvailable) {
+        if (!presencePatched && obj.sendPresenceAvailable && obj.sendPresenceUnavailable) {
             console.log("patching sendPresenceAvailable()");
-            obj.sendPresenceAvailable = wrapper(obj.sendPresenceAvailable, "sendPresenceAvailable", offlineConf);
+            obj.sendPresenceAvailable = wrapper(obj.sendPresenceAvailable, "sendPresenceAvailable", offlineConf, obj.sendPresenceUnavailable);
             presencePatched = true;
             maybeReset();
         }
